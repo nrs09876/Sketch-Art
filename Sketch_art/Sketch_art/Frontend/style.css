@@ -1,0 +1,56 @@
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #ff4b5c, #1e3c72);
+  margin: 0;
+  padding: 20px;
+  text-align: center;
+  color: white;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 10px;
+  font-weight: bold;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+h1 {
+  margin-top: 20px;
+  color: #fff;
+}
+
+table {
+  width: 90%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  background: #fff;
+  color: #333;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+table th, table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+
+table th {
+  background: #333;
+  color: #fff;
+}
+
+img {
+  max-width: 100px;
+  border-radius: 10px;
+}
+.team-card img {
+  width: 120px;        
+  height: 120px;
+  border-radius: 50%;  
+  object-fit: cover;   
+  border: 3px solid #fff; 
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}

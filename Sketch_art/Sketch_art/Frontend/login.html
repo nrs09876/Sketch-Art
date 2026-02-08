@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | SketchArt</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ff4b2b, #1e3c72);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-container {
+      background: #fff;
+      padding: 40px;
+      border-radius: 15px;
+      width: 350px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      text-align: center;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .login-container h1 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      margin: 10px 0 5px;
+      font-weight: bold;
+      color: #444;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      transition: 0.3s;
+    }
+
+    input:focus {
+      border-color: #2575fc;
+      outline: none;
+      box-shadow: 0 0 8px rgba(37,117,252,0.4);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(45deg, #6a11cb, #2575fc);
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    }
+
+    .register-link {
+      margin-top: 15px;
+    }
+
+    .register-link a {
+      color: #2575fc;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(-20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Login Section -->
+  <div class="login-container">
+    <h1>Login</h1>
+    <form id="loginForm">
+      <label for="username">Username or Email</label>
+      <input type="text" id="username" name="username" required>
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <div class="register-link">
+      <p>Don’t have an account? <a href="register.html">Register here</a></p>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const API_URL = "http://localhost:8080/api/users/login";
+      const form = document.getElementById('loginForm');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        if (!username || !password) {
+          alert("⚠️ Please enter both username and password!");
+          return;
+        }
+
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+          });
+
+          if (response.ok) {
+            const userData = await response.json();
+
+            // ✅ Save login info in sessionStorage
+            sessionStorage.setItem("username", userData.username);
+            sessionStorage.setItem("email", userData.email);
+            sessionStorage.setItem("role", userData.role);
+            sessionStorage.setItem("isLoggedIn", "true");
+
+            alert("✅ Login successful!");
+
+            // ✅ Redirect based on role
+            if (userData.role === "ADMIN") {
+              window.location.href = "admin.html";
+            } else {
+              window.location.href = "index.html";
+            }
+
+          } else {
+            const text = await response.text();
+            alert('❌ Login failed: ' + text);
+          }
+        } catch (error) {
+          console.error(error);
+          alert('⚠️ Error connecting to server.');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

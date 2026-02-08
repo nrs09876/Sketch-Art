@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery - Sketch Art</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    nav a { margin: 0 10px; text-decoration: none; color: #333; }
+    h1 { text-align: center; margin-bottom: 20px; }
+
+    /* Gallery Grid */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .gallery-card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: center;
+      padding: 10px;
+      transition: transform 0.2s;
+    }
+    .gallery-card:hover { transform: scale(1.03); }
+    .gallery-card img {
+      width: 100%; height: 150px; object-fit: cover;
+      cursor: pointer; border-radius: 6px;
+    }
+    .gallery-card h3 { margin: 10px 0 5px; font-size: 18px; }
+    .gallery-card p { font-size: 14px; color: #555; }
+
+    /* Modal */
+    #imageModal {
+      display: none; position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      justify-content: center; align-items: center;
+      z-index: 1000;
+    }
+    #imageModal img {
+      max-width: 90%; max-height: 90%;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+    #closeModal {
+      position: absolute; top: 20px; right: 30px;
+      font-size: 30px; color: #fff; cursor: pointer;
+    }
+
+    /* Form */
+    .form-section {
+      margin-top: 40px;
+      max-width: 400px;
+    }
+    .form-section input {
+      width: 100%; padding: 8px;
+      margin: 6px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .form-section button {
+      padding: 10px;
+      background: #2ecc71;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .form-section button:hover { background: #27ae60; }
+
+    /* Preview image */
+    #preview {
+      display: none;
+      width: 100%;
+      margin-top: 10px;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="index.html">Home</a> |
+    <a href="gallery.html">Gallery</a> |
+    <a href="about.html">About</a> |
+    <a href="contact.html">Contact</a> |
+    <a href="login.html" id="loginLink">Login</a> |
+    <a href="admin.html" id="adminLink">Admin Panel</a> |
+    <a href="#" id="logoutLink" style="display:none;">Logout</a>
+  </nav>
+
+  <h1>Sketch Art Gallery</h1>
+
+  <!-- Gallery Grid -->
+  <div class="gallery-grid" id="gallery-data"></div>
+
+  <!-- Modal -->
+  <div id="imageModal">
+    <span id="closeModal">&times;</span>
+    <img id="modalImage" src="">
+  </div>
+
+  <!-- Add Sketch Form -->
+  <div class="form-section" id="addGallerySection" style="display: none;">
+    <h2>Add Sketch</h2>
+    <form id="galleryForm">
+      <input type="text" id="gTitle" placeholder="Enter title" required>
+      <input type="text" id="gDescription" placeholder="Enter description" required>
+      <input type="text" id="gImageUrl" placeholder="Enter image URL">
+      <label for="gImageFile">Or Upload Image:</label>
+      <input type="file" id="gImageFile" accept="image/*">
+      <img id="preview" alt="Preview" style="display:none;">
+      <button type="submit">Add Sketch</button>
+    </form>
+  </div>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const loginLink = document.getElementById("loginLink");
+    const adminLink = document.getElementById("adminLink");
+    const logoutLink = document.getElementById("logoutLink");
+    const addSection = document.getElementById("addGallerySection");
+
+    const username = sessionStorage.getItem("username");
+    const role = sessionStorage.getItem("role");
+
+    if(username){
+      loginLink.style.display = "none";
+      logoutLink.style.display = "inline";
+
+      if(role === "ADMIN") adminLink.style.display = "inline";
+      else adminLink.style.display = "none";
+
+      addSection.style.display = "block";
+    } else {
+      loginLink.style.display = "inline";
+      adminLink.style.display = "none";
+      logoutLink.style.display = "none";
+      addSection.style.display = "none";
+    }
+
+    logoutLink.addEventListener("click", () => {
+      sessionStorage.clear();
+      window.location.href = "login.html";
+    });
+
+    const galleryGrid = document.getElementById("gallery-data");
+    const galleryForm = document.getElementById("galleryForm");
+    const titleInput = document.getElementById("gTitle");
+    const descInput = document.getElementById("gDescription");
+    const urlInput = document.getElementById("gImageUrl");
+    const fileInput = document.getElementById("gImageFile");
+    const preview = document.getElementById("preview");
+
+    // 🔹 Load gallery
+    async function loadGallery() {
+      try {
+        const res = await fetch("http://localhost:8080/api/sketches");
+        const sketches = await res.json();
+
+        galleryGrid.innerHTML = "";
+        sketches.forEach(sketch => {
+          const card = document.createElement("div");
+          card.className = "gallery-card";
+          card.innerHTML = `
+            <img src="${sketch.imageUrl}" alt="${sketch.title}" onclick="showImage('${sketch.imageUrl}')">
+            <h3>${sketch.title}</h3>
+            <p>${sketch.description}</p>
+          `;
+          galleryGrid.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Error loading gallery:", err);
+      }
+    }
+
+    loadGallery();
+
+    // 🔹 Modal logic
+    const imageModal = document.getElementById("imageModal");
+    const modalImage = document.getElementById("modalImage");
+    const closeModal = document.getElementById("closeModal");
+
+    window.showImage = function(url) {
+      modalImage.src = url;
+      imageModal.style.display = "flex";
+    }
+
+    closeModal.onclick = () => imageModal.style.display = "none";
+    imageModal.onclick = (e) => { if(e.target === imageModal) imageModal.style.display = "none"; };
+
+    // 🔹 Image preview logic
+    fileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if(file){
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          preview.src = event.target.result;
+          preview.style.display = "block";
+          urlInput.value = "";
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+
+    urlInput.addEventListener("input", () => {
+      if(urlInput.value.trim() !== ""){
+        fileInput.value = "";
+        preview.style.display = "none";
+      }
+    });
+
+    // 🔹 Add Sketch submit
+    galleryForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      if(!username){
+        alert("⚠️ Please login to add sketches.");
+        return;
+      }
+
+      const title = titleInput.value;
+      const description = descInput.value;
+      let finalImage = urlInput.value;
+
+      const file = fileInput.files[0];
+      if(file){
+        finalImage = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = err => reject(err);
+        });
+      }
+
+      const sketchData = { title, description, imageUrl: finalImage };
+
+      try{
+        await fetch("http://localhost:8080/api/sketches", {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify(sketchData)
+        });
+        alert("✅ Sketch added!");
+        galleryForm.reset();
+        preview.style.display = "none";
+        loadGallery();
+      }catch(err){
+        console.error("Error adding sketch:", err);
+        alert("⚠️ Failed to add sketch.");
+      }
+    });
+  });
+  </script>
+</body>
+</html>

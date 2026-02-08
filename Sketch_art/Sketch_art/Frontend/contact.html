@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us - Sketch Art</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ff4b5c, #1e3c72);
+      margin: 0;
+      padding: 0;
+      color: #fff;
+    }
+
+    nav {
+      background: rgba(0,0,0,0.6);
+      padding: 10px;
+      text-align: center;
+    }
+
+    nav a {
+      color: #fff;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .contact-container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: #fff;
+      color: #333;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .contact-container h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #1e3c72;
+    }
+
+    .contact-container label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .contact-container input,
+    .contact-container textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .contact-container button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #ff4b5c, #1e3c72);
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .contact-container button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <a href="index.html">Home</a> |
+  <a href="gallery.html">Gallery</a> |
+  <a href="about.html">About</a> |
+  <a href="contact.html">Contact</a> |
+  <a href="login.html" id="loginLink">Login</a> |
+  <a href="admin.html" id="adminLink">Admin Panel</a> |
+  <a href="#" id="logoutLink" style="display:none;">Logout</a>
+</nav>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const username = sessionStorage.getItem("username");
+  const role = sessionStorage.getItem("role");
+
+  const loginLink = document.getElementById("loginLink");
+  const adminLink = document.getElementById("adminLink");
+  const logoutLink = document.getElementById("logoutLink");
+
+  if(username){
+    // User logged in
+    loginLink.style.display = "none";        // hide login
+    logoutLink.style.display = "inline";     // show logout
+
+    if(role === "ADMIN"){
+      adminLink.style.display = "inline";    // show admin panel for admin
+    } else {
+      adminLink.style.display = "none";      // hide for regular user
+    }
+  } else {
+    // Not logged in
+    loginLink.style.display = "inline";
+    adminLink.style.display = "none";
+    logoutLink.style.display = "none";
+  }
+
+  // Logout functionality
+  logoutLink.addEventListener("click", () => {
+    sessionStorage.clear();
+    window.location.href = "login.html";
+  });
+});
+</script>
+
+  <!-- Contact Section -->
+  <div class="contact-container">
+    <h1>Contact Us</h1>
+    <form id="contactForm">
+      <label for="name">Your Name</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="email">Your Email</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="message">Your Message</label>
+      <textarea id="message" name="message" rows="5" required></textarea>
+
+      <button type="submit">Send Message</button>
+    </form>
+  </div>
+
+  <!-- Script to send data -->
+  <script>
+    // Backend endpoint URL (check your Spring Boot port)
+    const CONTACT_API = "http://localhost:8080/api/contact/save";
+
+    document.getElementById("contactForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const message = document.getElementById("message").value;
+
+      try {
+        const response = await fetch(CONTACT_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, message })
+        });
+
+        if (response.ok) {
+          alert("Message sent successfully!");
+          document.getElementById("contactForm").reset();
+        } else {
+          const err = await response.text();
+          alert("Failed: " + err);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+        alert("Server error: " + err.message);
+      }
+    });
+  </script>
+
+</body>
+</html>

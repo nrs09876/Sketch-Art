@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us - Sketch Art</title>
+  <style>
+  body {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  background: linear-gradient(135deg, #fff0f5, #e6f0ff);
+  color: #333;
+}
+    nav {
+      background: #111;
+      padding: 12px;
+      text-align: center;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #ff4b5c;
+    }
+
+    /* ABOUT SECTION */
+    .about-section {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      padding: 50px 10%;
+      gap: 50px;
+    }
+
+    .about-text {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .about-text h1 {
+      font-size: 50px;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+
+    .about-text p {
+      line-height: 1.7;
+      margin-bottom: 20px;
+      color: #444;
+      font-size: 16px;
+    }
+
+    .about-image {
+      flex: 1;
+      min-width: 300px;
+      text-align: center;
+    }
+
+    .about-image img {
+      width: 90%;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* COUNTER SECTION */
+    .counter-section {
+      background: #f9f9f9;
+      padding: 50px 0;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 50px;
+    }
+
+    .counter-box {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .counter-box h2 {
+      font-size: 50px;
+      color: #ff4b5c;
+      margin-bottom: 10px;
+    }
+
+    .counter-box p {
+      font-size: 18px;
+      color: #333;
+    }
+
+    /* CONTACT INFO */
+    .contact-section {
+      background: #111;
+      color: #fff;
+      padding: 50px 10%;
+      text-align: center;
+    }
+
+    .contact-section h2 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #ff4b5c;
+    }
+
+    .contact-details p {
+      font-size: 16px;
+      line-height: 1.8;
+      margin: 5px 0;
+    }
+
+    @media(max-width: 900px) {
+      .about-section { flex-direction: column; text-align: center; }
+      .about-image img { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="index.html">Home</a> |
+    <a href="gallery.html">Gallery</a> |
+    <a href="about.html">About</a> |
+    <a href="contact.html">Contact</a> |
+    <a href="login.html" id="loginLink">Login</a> |
+    <a href="admin.html" id="adminLink">Admin Panel</a> |
+    <a href="#" id="logoutLink" style="display:none;">Logout</a>
+  </nav>
+
+  <!-- About Section -->
+  <section class="about-section">
+    <div class="about-text">
+      <h1>ABOUT US</h1>
+      <p>
+        Hello friends , welcome to <strong>Sketch Art</strong>!  
+        I’m a commission portrait artist with years of experience in creating 
+        lifelike celebrity and live sketches.  
+        where I create beautiful and personalized sketches in a short time.  
+        You can find me by searching “Sketch Art Near Me” or “Pencil Artist in Greater Noida”.
+      </p>
+      <p>
+        I’m passionate about art, music, and creativity. My realistic pencil drawings are made from 
+        charcoal powder with fine attention to detail — capturing emotions through every stroke.  
+        I’ve also worked with sculptures, wall paintings, and color pencil portraits.  
+        I believe the more you practice, the more beautiful your art becomes.
+      </p>
+    </div>
+
+    <div class="about-image">
+      <img src="image/naresh-singh.jpg" alt="Naresh Singh - Sketch Artist">
+    </div>
+  </section>
+
+  <!-- Counter Section -->
+  <section class="counter-section">
+    <div class="counter-box">
+      <h2>15300+</h2>
+      <p>Satisfied Customers</p>
+    </div>
+    <div class="counter-box">
+      <h2>3200+</h2>
+      <p>Quality Work</p>
+    </div>
+    <div class="counter-box">
+      <h2>15000+</h2>
+      <p>Happy Customers</p>
+    </div>
+  </section>
+
+<!-- Contact Section -->
+<section class="contact-section">
+  <h2>Contact Us</h2>
+  <div class="contact-details">
+    <p><strong>📞 Phone:</strong> +91 9891011388</p>
+    <p><strong>📧 E-mail:</strong> nrs80967@gmail.com</p>
+    <p>
+      <strong>
+        <img src="https://www.citypng.com/public/uploads/preview/hd-address-location-map-flat-red-icon-symbol-transparent-png-701751694974714tfkkx55ffo.png?v=2025062002" 
+             alt="Address Icon" 
+             style="width:20px; vertical-align:middle; margin-right:6px;">
+        Address:
+      </strong>
+      Pari Chowk, Greater Noida, Uttar Pradesh 201310
+    </p>
+  </div>
+</section>
+
+
+  <!-- JS: Login visibility -->
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const username = sessionStorage.getItem("username");
+    const role = sessionStorage.getItem("role");
+    const loginLink = document.getElementById("loginLink");
+    const adminLink = document.getElementById("adminLink");
+    const logoutLink = document.getElementById("logoutLink");
+
+    if (username) {
+      loginLink.style.display = "none";
+      logoutLink.style.display = "inline";
+      if (role === "ADMIN") {
+        adminLink.style.display = "inline";
+      } else {
+        adminLink.style.display = "none";
+      }
+    } else {
+      loginLink.style.display = "inline";
+      adminLink.style.display = "none";
+      logoutLink.style.display = "none";
+    }
+
+    logoutLink.addEventListener("click", () => {
+      sessionStorage.clear();
+      window.location.href = "login.html";
+    });
+  });
+  </script>
+
+</body>
+</html>
